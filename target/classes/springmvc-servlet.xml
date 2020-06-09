@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/tx/spring-task.xsd
+        http://www.springframework.org/schema/jdbc
+        http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+        http://www.springframework.org/schema/cache
+        http://www.springframework.org/schema/cache/spring-cache.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!-- 配置SpringMVC -->
+
+    <!-- 开启SpringMVC注解模式 -->
+    <!-- 简化配置：
+           (1)自动注册DefaultAnootationHandlerMapping,AnotationMethodHandlerAdapter
+           (2)提供一些列：数据绑定，数字和日期的format @NumberFormat, @DateTimeFormat, xml,json默认读写支持
+    -->
+    <!-- 激活基于注解的配置 @RequestMapping, @ExceptionHandler,数据绑定 ,@NumberFormat ,
+@DateTimeFormat ,@Controller ,@Valid ,@RequestBody ,@ResponseBody等  -->
+    <mvc:annotation-driven />
+
+    <!-- 静态资源配置:
+            方式0: 在web.xml中配置
+                    <servlet-mapping><servlet-name>default</servlet-name><url-pattern>*.jpg</url-pattern></servlet-mapping>
+                    <servlet-mapping><servlet-name>default</servlet-name><url-pattern>*.css</url-pattern></servlet-mapping>
+                    ...
+    -->
+
+    <!-- 静态资源配置: (spring3.0.4以后版本支持)
+            方式1: <mvc:resources location="/xx/" mapping="/yy/**"/> -->
+    <!-- location元素: webapp目录下的 static 包下的所有文件/目录不被拦截 -->
+    <!-- mapping元素: 以/static 开头的所有请求路径，如/static/a 或者/static/a/b-->
+    <!-- DispatcherServlet不会拦截以/static开头的所有请求路径，并当作静态资源交由Servlet处理-->
+    <!-- 使用 <mvc:resources/> 元素,把 mapping 的 URI 注册到 SimpleUrlHandlerMapping的urlMap 中 -->
+    <!-- ↓如此就不必另外添加一个mvc来处理静态资源，而mvc知道静态资源所处的位置为resources文件夹↓ -->
+    <mvc:resources location="/static/" mapping="/static/**"/>
+    <!-- ↓在SpringMVC3.0之后推荐使用↓ -->
+    <!-- 将 /img/** 映射到 ResourceHttpRequestHandler 进行处理，location指定静态资源的存储位置  -->
+    <!-- 作用: DispatcherServlet不会拦截以/static开头的所有请求路径，并当作静态资源交由Servlet处理 -->
+    <mvc:resources location="/img/" mapping="/img/**"/>
+    <mvc:resources location="/js/" mapping="/js/**"/>
+    <mvc:resources location="/css/" mapping="/css/**"/>
+    <!-- WEB-INF是Java的WEB应用的安全目录。所谓安全就是客户端无法访问，只有服务端可以访问的目录。
+    如果想在页面中直接访问其中的文件，必须通过web.xml文件对要访问的文件进行相应映射才能访问。
+    当然，你非要放在WEB-INF中，则必须修改resources映射，如： -->
+    <!--<mvc:resources location="/WEB-INF/js/" mapping="/js/**"  />-->
+
+    <!-- 静态资源配置:
+        方式2: defaultServlet配置
+            (1)加入对静态资源的处理：js,gif,png.docx等
+            (2)允许使用"/"做整体映射
+-->
+    <!-- 会把 "/**" url,注册到 SimpleUrlHandlerMapping 的 urlMap 中,
+         把对静态资源的访问由 HandlerMapping 转到 org.springframework.web.servlet.resource.DefaultServletHttpRequestHandler 处理并返回.
+         DefaultServletHttpRequestHandler 使用就是各个 Servlet 容器自己的默认 Servlet. -->
+    <!--<mvc:default-servlet-handler />-->
+
+    <!-- 视图层配置(视图解析器) -->
+    <!-- InternalResourceViewResolver: 支持解析JSP等视图 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!-- JstlView: 支持解析 JSTL -->
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView">
+        </property>
+        <property name="prefix" value="/WEB-INF/view/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+
+    <!-- 配置根视图 -->
+    <!--此映射一旦追加，SpringMVC就不会去找自定义的请求方法了，而是直接结合视图解析器转发页面-->
+    <!--此映射相当于追加了1个URI为[/]且只有return "index";一条语句 的请求方法-->
+    <!-- view-name 映射的动态网页文件:
+        valueOf(InternalResourceViewResolver:prefix)/valueOf(view-name)valueOf(InternalResourceViewResolver:suffix) -->
+    <mvc:view-controller path="/" view-name="index_WEBINF" />
+
+    <!-- 扫描Web Controller相关的Bean -->
+    <context:component-scan base-package="cn.johnnyzen.hiyusite" >
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+    <!--<context:component-scan base-package="cn.johnnyzen.hiyusite" />-->
+
+</beans>

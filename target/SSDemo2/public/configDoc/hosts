@@ -1,0 +1,41 @@
+# Copyright (c) 1993-2009 Microsoft Corp.
+#
+# This is a sample HOSTS file used by Microsoft TCP/IP for Windows.
+#
+# This file contains the mappings of IP addresses to host names. Each
+# entry should be kept on an individual line. The IP address should
+# be placed in the first column followed by the corresponding host name.
+# The IP address and the host name should be separated by at least one
+# space.
+#
+# Additionally, comments (such as these) may be inserted on individual
+# lines or following the machine name denoted by a '#' symbol.
+#
+# For example:
+#
+#      102.54.94.97     rhino.acme.com          # source server
+#       38.25.63.10     x.acme.com              # x client host
+
+# localhost name resolution is handled within DNS itself.
+#	127.0.0.1       localhost
+#	::1             localhost
+192.168.1.175 windows10.microdone.cn
+# Sefonsoft - Govern - luowen - 2020-05-13
+10.0.8.92       cas.govern.sefon.com
+10.0.8.92       bms.govern.sefon.com
+10.0.8.92       wytaskwatcher.govern.sefon.com
+10.0.8.92       wydataquality.govern.sefon.com
+10.0.11.119       wydataeye.govern.sefon.com
+10.0.8.92       wydaas.govern.sefon.com
+10.0.8.92       executor.govern.sefon.com
+10.0.8.92       wydataqualityexecutor.govern.sefon.com
+10.0.8.92       datasource.govern.sefon.com
+10.0.8.92       database.govern.sefon.com
+10.0.8.92       mysql.govern.sefon.com
+10.0.8.117      es.node1.govern.sefon.com
+10.0.8.117      es.node2.govern.sefon.com
+10.0.8.117      es.node3.govern.sefon.com
+10.0.8.142      hive.govern.sefon.com
+10.0.11.138     fastdfs.govern.sefon.com
+10.0.11.138     rabbitmq.node1.govern.sefon.com
+10.0.8.65       redis.node1.govern.sefon.com

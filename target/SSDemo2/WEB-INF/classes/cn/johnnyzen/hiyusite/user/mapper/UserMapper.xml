@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 用 XML 实现实体映射器 -->
+
+<!-- 为mapper指定唯一的namespace -->
+<!-- namespace用于绑定DAO(Java)/Mapper(Java/XML)的Java接口，DAO(Java)/Mapper(Java/XML)接口的Java方法对应mapper.xml中的sql语名。 -->
+<!-- 即 namespace 方式1 可命名为 : 路径(.式) + mappper.xml(自身)文件名    -->
+<!-- 即 namespace 方式2 可命名为 : 路径(.式) + Mapper.java(外部接口)文件名 -->
+<mapper namespace="cn.johnnyzen.hiyusite.user.mapper.UserMapper">
+    <resultMap id="USER_ResultMap" type="cn.johnnyzen.hiyusite.user.domain.User">
+        <id property="id" column="user_id" />
+        <result property="nickname" column="nickname" />
+        <result property="email" column="email" />
+        <result property="password" column="password" />
+    </resultMap>
+
+<!--    <select id="getUserById" parameterType="Integer" resultType="cn.johnnyzen.hiyusite.user.domain.User">
+		select * from `tb_user` where user_id = #{id}
+    </select>-->
+
+    <!-- id：本SQL的select语句ID -->
+    <!-- keyProperty: 将插入或更新操作时的返回值赋给 PO 类的某个属性，通常会设置为主键对应的属性。若为联合主键，可将多个值用逗号隔开 -->
+    <!-- useGeneratedKeys: 将使MyBatis用JDBC的getGeneratedKeys()方法获取由数据库内部产生的主键 -->
+    <insert id="saveUser" parameterType="cn.johnnyzen.hiyusite.user.domain.User" keyProperty="id"
+            useGeneratedKeys="true">
+        insert into tb_user(NICKNAME, EMAIL, PASSWORD) values(#{nickname}, #{email}, #{password})
+    </insert>
+
+    <select id="getAllUsers" resultType="Map">
+        select * from tb_user;
+    </select>
+
+    <!-- 模糊查询用户 <昵称字段优先，其他字段次之> -->
+    <!-- resultType : 若想要查询的返回值是List，需把resultType改成pojo.User，而非java.util.List -->
+    <select id="getUsersByFuzzyQuery"
+            resultType="cn.johnnyzen.hiyusite.user.domain.User"
+            parameterType="cn.johnnyzen.hiyusite.user.domain.User">
+        select * from tb_user where 1=1
+        <if test="nickname != null and nickname != ''"><!-- if 可执行多种IF情况 -->
+            AND nickname like concat('%', #{nickname}, '%')
+        </if>
+        <choose> <!-- choose-when 仅选择一种情况执行 -->
+            <when test="email != null and email != ''">
+                and email like concat('%', #{email}, '%')
+            </when>
+            <when test="password != null and password != ''">
+                and password = #{password}
+            </when>
+            <otherwise>
+                and user_id >= 0
+            </otherwise>
+        </choose>
+    </select>
+
+    <!--使用where元素根据条件动态查询用户信息-->
+    <select id="selectUserByWhere" resultType="cn.johnnyzen.hiyusite.user.domain.User"
+            parameterType="cn.johnnyzen.hiyusite.user.domain.User">
+        select * from tb_user
+        <where>
+            <if test="nickname != null and nickname != ''">
+                and nickname like concat('%',#{nickname},'%')
+            </if>
+            <if test="email != null and email != '' ">
+                and email=#{email}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateUserBySet" parameterType="cn.johnnyzen.hiyusite.user.domain.User">
+        update tb_user
+        <set>
+            <if test="nickname != null and nickname != ''">nickname = #{nickname}</if>
+            <if test="nickname != null and nickname != '' and email != null and email != ''">
+                ,
+            </if>
+            <if test="email    != null and email    != ''">email = #{email   }</if>
+        </set>
+        where user_id = #{id}
+    </update>
+
+    <!--使用foreach元素查询用户信息-->
+    <select id="selectUsersByForeach" resultType="cn.johnnyzen.hiyusite.user.domain.User" parameterType="cn.johnnyzen.hiyusite.user.domain.User">
+        select * from tb_user where user_id in
+        <foreach item="userId" index="idx" collection="list" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </select>
+
+    <!--使用bind元素进行模糊查询-->
+    <select id="selectUsersByBind"
+            resultType="cn.johnnyzen.hiyusite.user.domain.User"
+            parameterType= "java.lang.String">
+        <!-- bind 中的 email 是 cn.johnnyzen.hiyusite.user.domain.User 的属性名 -->
+        <!-- <bind name="param_email" value="'%' + email + '%'"/> -->
+        <!-- bind 中的 _parameter 是 传入方法的参数[只能如此命名] -->
+        <bind name="param_email" value="'%' + _parameter + '%'"/>
+        select * from tb_user where email like #{param_email}
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="listUsers" resultMap="USER_ResultMap" >
+        select * from tb_user limit #{0},#{1}
+        <!--select * from tb_user limit #{offset},#{pageSize}-->
+    </select>
+    <select id="countTotalListUsers" resultType="int">
+        select COUNT(*) from tb_user
+    </select>
+
+</mapper>

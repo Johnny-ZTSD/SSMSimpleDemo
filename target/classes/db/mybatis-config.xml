@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration><!-- Mybatis配置文件的根元素 -->
+    <!-- 属性(文件)配置 -->
+    <properties resource="db/mybatis-jdbc.properties">
+        <!-- 相同属性:最高优先级的属性是那些作为方法参数的，然后是资源/url 属性，最后是 properties元素中指定的属性 -->
+        <!--        <property name="username" value="johnny"/> -->
+        <!--        <property name="password" value="johnnyzt0811"/> -->
+    </properties>
+
+    <!-- 全局配置参数，需要时再设置 -->
+    <settings>
+        <!--在使用MyBatis嵌套查询方式进行关联查询时，使用延迟加载可在一定程度上提高查询效率-->
+        <!-- 打开延迟加载的开关 -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!-- 将积极加载改为消极加载(即 按需加载) -->
+        <setting name="aggressiveLazyLoading" value="false"/>
+
+        <!-- 开启二级缓存 -->
+        <setting name="cacheEnabled" value="true"/>
+
+        <!-- 开启驼峰命名转换 从数据库列名 A_COLUMN 到经典 Java 属性名 aColumn 的类似映射-->
+        <!-- Table{create_time} -> Entity{createTime} -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+
+        <!-- 日志 -->
+        <!-- STDOUT_LOGGING: 标准输出(控制台) -->
+        <!-- LOG4J -->
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+
+        <!-- 使用jdbc的getGeneratedKeys获取数据库自增主键值 -->
+        <setting name="useGeneratedKeys" value="true" />
+
+        <!-- 使用列别名替换列名 默认:true -->
+        <setting name="useColumnLabel" value="true" />
+    </settings>
+
+    <!-- 别名定义 type：类型的路径 alias：别名-->
+    <!--    <typeAliases>-->
+    <!--        <typeAlias alias="User" type="cn.johnnyzen.hiyusite.user.domain.User"/>-->
+    <!--    </typeAliases>-->
+
+    <!-- 环境配置 即 配置连接的数据库-->
+    <!-- ↓与Spring整合后，↓数据源的配置亦不可取消
+          (∵自己造的工具类MappUtil需要依赖<environment>创建SqlSession)-->
+    <environments default="development">
+        <environment id="development">
+            <!--配置Mybatis的事务管理，指定事务管理的类型 type=JDBC:采用Java JDBC的事务管理 -->
+            <transactionManager type="JDBC"></transactionManager>
+            <!-- 数据源配置 dataSource:连接源配置 POOLED:JDBC连接对象的数据源连接池的实现 -->
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+                <!--                <property name="driver" value="com.mysql.jdbc.Driver"/>-->
+                <!--                <property name="url" value="jdbc:mysql//johnnyzen.cn:3306/HiyuSite"/>-->
+                <!--                <property name="username" value="johnny"/>-->
+                <!--                <property name="password" value="johnnyzt0811"/>-->
+            </dataSource>
+        </environment>
+    </environments>
+
+
+    <!--告知Mybatis去哪找持久化类的映射文件 -->
+    <!--对于在src下的文件直接写文件名。若在某包下，则要写明路径,如：com/mybatistest/config/UserMapper.xml -->
+    <!--若XXMapper接口和mapper(XML)文件不在同一包下:不能进行自动扫描解析,需对接口和XML文件分别配置 -->
+    <mappers>
+        <!-- 扫描路径下的mapper映射文件 -->
+        <mapper resource="cn/johnnyzen/hiyusite/user/mapper/UserMapper.xml"/>
+        <mapper resource="cn/johnnyzen/hiyusite/book/mapper/BookMapper.xml"/>
+        <!-- 扫描包下的接口文件 -->
+        <!--        <package name="cn.johnnyzen.hiyusite.user.mapper.IUserMappper"/>-->
+    </mappers>
+
+</configuration>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.johnnyzen.hiyusite.book.mapper.BookMapper">
+    
+    <resultMap id="bookResultBean" type="cn.johnnyzen.hiyusite.book.domain.Book">
+        <id property="id" column="book_id" />
+        <result property="name" column="book_name" />
+        <result property="className" column="book_class" />
+        <result property="name" column="book_name" />
+        <result property="profile" column="profile" />
+        <result property="authors" column="authors" />
+        <result property="recommenders" column="recommenders" />
+        <result property="importantLevel" column="important_level" />
+        <result property="resource" column="resource" />
+        <result property="resourceType" column="resource_type" />
+    </resultMap>
+
+    <!-- 易错： 调用<resultMap>的结果类型时，此处使用的是resultMap属性，而非resultType属性 -->
+    <select id="findAll" resultMap="bookResultBean">
+        select * from tb_book
+    </select>
+
+    <!-- 分页 + 多对多 示例 -->
+    <select id="findBooksByUserId" resultMap="bookResultBean">
+        SELECT
+            b.book_id,
+            b.book_name,
+            b.book_class,
+            b.profile,
+            b.press,
+            b.authors,
+            b.recommenders,
+            b.important_level,
+            b.resource,
+            b.resource_type
+        FROM tb_book AS b,r_read AS r, tb_user AS u
+	    WHERE b.book_id = r.book_id_fk AND r.user_id_fk = u.user_id AND u.user_id = #{0}
+	    LIMIT #{1},#{2}
+    </select>
+    <select id="countTotalFindBooksByUserId" resultType="int">
+        SELECT count(*) FROM tb_book AS b,r_read AS r, tb_user AS u
+	        WHERE b.book_id = r.book_id_fk AND r.user_id_fk = u.user_id AND u.user_id = #{userId}
+    </select>
+</mapper>

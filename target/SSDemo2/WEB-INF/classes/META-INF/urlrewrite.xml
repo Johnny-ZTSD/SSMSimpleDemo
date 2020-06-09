@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 4.0//EN"
+        "http://www.tuckey.org/res/dtds/urlrewrite4.0.dtd">
+<urlrewrite default-match-type="wildcard">
+	<rule>
+		<from>/favicon.ico</from>
+		<to last="true">/favicon.ico</to>
+	</rule>
+
+	<rule match-type="regex">
+		<from>(.*)/$</from>
+		<to>$1/index</to>
+	</rule>
+	
+	<rule>
+		<from>/static/**</from>
+		<to last="true">/static/$1</to>
+	</rule>
+	<rule>
+		<from>/rest/**</from>
+		<to last="true">/rest/$1</to>
+	</rule>
+	<rule>
+		<from>/public/**</from>
+		<to last="true">/public/$1</to>
+	</rule>
+	<rule>
+		<from>/style/**</from>
+		<to last="true">/style/$1</to>
+	</rule>
+	<rule>
+		<from>/script/**</from>
+		<to last="true">/script/$1</to>
+	</rule>
+
+	<rule match-type="regex">
+		<from>^/j_security_(.*)$</from>
+		<to last="true">/j_security_$1</to>
+	</rule>
+
+	<rule>
+		<from>/**</from>
+		<to last="true">/app/$1</to>
+	</rule>
+	<!--20190723废弃-->
+	<!--<outbound-rule>
+		<from>/app/**</from>
+		<to>/$1</to>
+	</outbound-rule>-->
+</urlrewrite>
