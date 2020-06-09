@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/tx/spring-task.xsd
+        http://www.springframework.org/schema/jdbc
+        http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+        http://www.springframework.org/schema/cache
+        http://www.springframework.org/schema/cache/spring-cache.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd">
+
+<!--加载其他的spring配置文件-->
+    <!-- classpath: WEB-INF文件夹下的classes目录, 只会到class路径中查找找文件 -->
+    <!-- classpath*: WEB-INF文件夹下的classes目录, 不仅包含class路径，还包括jar文件中[class路径]进行查找 -->
+    <!--             classpath*:需遍历所有classpath，故而加载很慢，尽量避免使用classpath* -->
+    <!-- https://www.cnblogs.com/EasonJim/p/6709314.html -->
+    <!--<import resource="classpath:applicationContext-tx.xml"/>-->
+    <!-- springmvc -->
+    <import resource="springmvc-servlet.xml" />
+    <!-- 1 数据源/mybatis -->
+    <import resource="applicationContext-db.xml"/>
+    <import resource="applicationContext-mybatis.xml"/>
+    <!-- 2 事务/Serivce -->
+    <import resource="applicationContext-tx.xml"/>
+    <!-- 3 Other -->
+    <import resource="applicationContext-*.xml"/>
+
+    <!-- 加载资源文件 -->
+    <!--<context:property-placeholder location="classpath:/db/mybatis-jdbc.properties" />-->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <!-- 配置资源文件 -->
+        <property name="locations">
+            <list>
+                <!--<value>classpath:/db/mybatis-jdbc.properties</value>-->
+                <value>classpath:log4j.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <!--开启spring注解，扫描spring注解所在的包 -->
+    <context:component-scan base-package="cn.johnnyzen"/>
+
+    <!--Spring 配置数据源(数据库连接池) -->
+    <!-- C390 - com.mchange.v2.c3p0.ComboPooledDataSource  -->
+    <!-- Druid - com.alibaba.druid.pool.DruidDataSource  -->
+    <!-- DBCP - org.apache.commons.dbcp.BasicDataSource -->
+<!--    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+          destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driver}"></property>
+        <property name="url" value="${jdbc.url}"></property>
+        <property name="username" value="${jdbc.username}"></property>
+        <property name="password" value="${jdbc.password}"></property>
+        <property name="initialSize" value="${jdbc.initialSize}"></property>
+        &lt;!&ndash; 最大连接数 &ndash;&gt;
+        <property name="maxActive" value="${jdbc.maxActive}"></property>
+        &lt;!&ndash; 获取连接的最大等待时间(单位:毫秒 1000ms=1s) &ndash;&gt;
+        <property name="maxWait" value="${jdbc.maxWait}"></property>
+    </bean>-->
+
+<!--    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>-->
+
+    <!--<bean id="baseJdbcDao" class="com.sefon.common.jdbc.dao.BaseJdbcDaoImpl"/>-->
+
+    <bean id="threadPoolTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <property name="corePoolSize" value="50"/>
+        <property name="maxPoolSize" value="50"/>
+        <property name="keepAliveSeconds" value="300"/>
+    </bean>
+
+<!--    <aop:config>-->
+<!--        &lt;!&ndash;pointcut元素定义1个切入点，execution中的第一个星号 用以匹配方法的返回类型，-->
+<!--        这里星号表明匹配所有返回类型。 com.abc.dao.*.*(..)表明匹配cn.itcast.mybatis.service包下的所有类的所有 -->
+<!--        方法 &ndash;&gt;-->
+<!--        <aop:pointcut id="myPointcut" expression="execution(* cn.johnnyzen.hiyusite.xx.service.*.*(..))" />-->
+<!--        &lt;!&ndash; 将定义好的事务处理策略应用到上述的切入点 &ndash;&gt;-->
+<!--        <aop:advisor advice-ref="txAdvice" pointcut-ref="myPointcut" />-->
+<!--    </aop:config>-->
+
+    <!-- [可选]aspectj支持自动代理实现AOP功能 -->
+    <aop:aspectj-autoproxy proxy-target-class="true" />
+</beans>
