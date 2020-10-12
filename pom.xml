@@ -143,12 +143,24 @@
     </dependency>
     <!-- selenium -->
     <!-- org.openqa.selenium.chrome.ChromeDriver/WebDriver -->
+    <!-- chrome driver download : https://npm.taobao.org/mirrors/chromedriver/ -->
     <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
     <dependency>
     <groupId>org.seleniumhq.selenium</groupId>
     <artifactId>selenium-java</artifactId>
     <version>3.0.1</version>
   </dependency>
+  <!-- selenium - plan B (替代 selenium-java 的一种方式) (本JAR包的3.x版本需手动下载) -->
+  <!-- org.openqa.selenium.chrome.ChromeDriver/WebDriver -->
+  <!-- chrome driver download : https://npm.taobao.org/mirrors/chromedriver/ -->
+  <!-- download this jar by manual: http://selenium-release.storage.googleapis.com/index.html -->
+  <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-server-standalone -->
+  <dependency>
+    <groupId>org.seleniumhq.selenium</groupId>
+    <artifactId>selenium-server-standalone</artifactId>
+    <version>2.53.0</version>
+  </dependency>
+
 
     <!-- 【Java Servlet Web 基础包】 -->
     <dependency>
